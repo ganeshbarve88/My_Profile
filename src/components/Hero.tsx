@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { PERSONAL_INFO, SKILL_CATEGORIES, CERTIFICATIONS, AWARDS } from '../data/resumeData';
+import { SKILL_CATEGORIES, CERTIFICATIONS, AWARDS } from '../data/resumeData';
 import { getExactExperience } from '../utils/experience';
-import { MapPin, Mail, Phone, FileText, Upload } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
+import { MapPin, Mail, Phone, FileText, Camera, Edit3 } from 'lucide-react';
 
 interface HeroProps {
   onOpenResume: () => void;
@@ -10,18 +11,23 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenResume, onOpenContact }) => {
   const [imgError, setImgError] = useState(false);
-  const [customPhotoUrl, setCustomPhotoUrl] = useState<string | null>(null);
+  const { 
+    photoUrl, 
+    profileData, 
+    isAdmin, 
+    setIsEditModalOpen, 
+    setIsLoginModalOpen 
+  } = useAdmin();
 
   const exactExp = getExactExperience();
-  const totalSkillsCount = SKILL_CATEGORIES.reduce((acc, cat) => acc + cat.skills.length, 0);
   const totalCertsCount = CERTIFICATIONS.length;
   const totalAwardsCount = AWARDS.reduce((acc, award) => acc + (award.count || 1), 0);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setCustomPhotoUrl(URL.createObjectURL(file));
-      setImgError(false);
+  const handleEditPhotoClick = () => {
+    if (isAdmin) {
+      setIsEditModalOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
     }
   };
 
@@ -34,38 +40,38 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onOpenContact }) => {
           <div className="flex-1 text-center md:text-left">
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-sky-600 dark:text-sky-400 mb-3 tracking-wide">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              <span>Senior Lead Data Engineer</span>
+              <span>{profileData.title}</span>
               <span className="text-slate-300 dark:text-slate-600">·</span>
               <span className="text-amber-600 dark:text-amber-400">2X GCP Certified</span>
             </div>
 
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl leading-tight">
-              Ganesh Barve
+              {profileData.name}
             </h1>
 
             <p className="mt-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-              {PERSONAL_INFO.summary}
+              {profileData.summary}
             </p>
 
             {/* Quiet metadata with both phone numbers */}
             <div className="mt-5 flex flex-wrap items-center justify-center md:justify-start gap-y-2 gap-x-4 text-xs text-slate-500 dark:text-slate-400">
               <span className="flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" />
-                <span>{PERSONAL_INFO.location}</span>
+                <span>{profileData.location}</span>
               </span>
               <span className="text-slate-300 dark:text-slate-700">·</span>
-              <a href={`mailto:${PERSONAL_INFO.email}`} className="hover:text-slate-900 dark:hover:text-white transition-colors">
-                {PERSONAL_INFO.email}
+              <a href={`mailto:${profileData.email}`} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+                {profileData.email}
               </a>
               <span className="text-slate-300 dark:text-slate-700">·</span>
               <span className="flex items-center gap-1.5">
                 <Phone className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" />
-                <a href={`tel:${PERSONAL_INFO.phone}`} className="hover:text-slate-900 dark:hover:text-white transition-colors tabular-nums">
-                  {PERSONAL_INFO.phone}
+                <a href={`tel:${profileData.phone}`} className="hover:text-slate-900 dark:hover:text-white transition-colors tabular-nums">
+                  {profileData.phone}
                 </a>
                 <span className="text-slate-400 dark:text-slate-600">/</span>
-                <a href={`tel:${PERSONAL_INFO.secondaryPhone}`} className="hover:text-slate-900 dark:hover:text-white transition-colors tabular-nums">
-                  {PERSONAL_INFO.secondaryPhone}
+                <a href={`tel:${profileData.secondaryPhone}`} className="hover:text-slate-900 dark:hover:text-white transition-colors tabular-nums">
+                  {profileData.secondaryPhone}
                 </a>
               </span>
             </div>
@@ -87,6 +93,17 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onOpenContact }) => {
                 <Mail className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 <span>Get in Touch</span>
               </button>
+
+              {isAdmin && (
+                <button
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="flex items-center gap-1.5 rounded-lg border border-emerald-500/40 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 dark:text-emerald-300 px-4 py-2.5 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                  title="Edit Profile & Photo"
+                >
+                  <Edit3 className="h-4 w-4" />
+                  <span>Edit Profile</span>
+                </button>
+              )}
             </div>
 
             {/* Key Executive Metrics */}
@@ -134,12 +151,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onOpenContact }) => {
             <div className="relative aspect-square overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 shadow-xl group">
               {!imgError ? (
                 <img
-                  src={customPhotoUrl || "/Ganesh_Passport.jpg"}
-                  alt="Ganesh Barve"
-                  className="h-full w-full object-cover object-top"
+                  src={photoUrl}
+                  alt={profileData.name}
+                  className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-102"
                   referrerPolicy="no-referrer"
                   onError={() => {
-                    if (!customPhotoUrl) setImgError(true);
+                    setImgError(true);
                   }}
                 />
               ) : (
@@ -156,14 +173,19 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onOpenContact }) => {
                       <path d="M52 56C50 40 60 26 80 26C100 26 110 40 108 56C104 46 96 36 80 36C64 36 56 46 52 56Z" fill="#18181b"/>
                     </svg>
                   </div>
-                  <p className="text-xs font-semibold text-slate-800 dark:text-white">Ganesh Barve</p>
-                  <label className="mt-2 flex items-center gap-1 text-[11px] text-sky-600 dark:text-sky-400 hover:underline cursor-pointer">
-                    <Upload className="h-3 w-3" />
-                    <span>Upload Photo</span>
-                    <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
-                  </label>
+                  <p className="text-xs font-semibold text-slate-800 dark:text-white">{profileData.name}</p>
                 </div>
               )}
+
+              {/* Edit Photo Overlay Button */}
+              <button
+                onClick={handleEditPhotoClick}
+                title={isAdmin ? "Edit / Update Photo" : "Admin Login to Change Photo"}
+                className="absolute bottom-2 right-2 flex items-center gap-1 rounded-lg bg-slate-950/75 hover:bg-slate-950 text-white px-2.5 py-1 text-[11px] font-medium backdrop-blur-md transition-all shadow-md cursor-pointer border border-white/20"
+              >
+                <Camera className="h-3 w-3 text-sky-400" />
+                <span>{isAdmin ? "Change Photo" : "Edit Photo"}</span>
+              </button>
             </div>
             <p className="mt-2 text-center text-[11px] text-slate-500">
               Senior Lead @ ANZ Bank
