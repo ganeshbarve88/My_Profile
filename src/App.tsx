@@ -12,6 +12,7 @@ import { CareerJourney } from './components/CareerJourney';
 import { TechStackMatrix } from './components/TechStackMatrix';
 import { EducationSection } from './components/EducationSection';
 import { CertificationsAndAwards } from './components/CertificationsAndAwards';
+import { SocialProfilesSection } from './components/SocialProfilesSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { ResumeModal } from './components/ResumeModal';
@@ -62,6 +63,9 @@ export default function App() {
 
             {/* Certifications & Corporate Honors */}
             <CertificationsAndAwards />
+
+            {/* Online Presence, Social Profiles & Technical Blog */}
+            <SocialProfilesSection />
 
             {/* Direct Contact */}
             <ContactSection />

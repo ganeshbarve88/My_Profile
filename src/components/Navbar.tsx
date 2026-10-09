@@ -37,6 +37,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
           <a href="#certifications" className="hidden sm:inline-block hover:text-slate-950 dark:hover:text-white transition-colors">
             Certifications
           </a>
+          <a href="#social" className="hidden sm:inline-block hover:text-slate-950 dark:hover:text-white transition-colors">
+            Profiles & Blog
+          </a>
           <a href="#contact" className="hover:text-slate-950 dark:hover:text-white transition-colors">
             Contact
           </a>

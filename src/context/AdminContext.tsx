@@ -10,6 +10,7 @@ const AUTHORIZED_EMAILS = [
 ].map((e) => e.toLowerCase());
 
 const DEFAULT_PASSKEY = 'Ganesh@ANZ2026';
+export const DEFAULT_GOOGLE_CLIENT_ID = '1074072186332-c1ork15p3517unrfbaq94brgee5iepn4.apps.googleusercontent.com';
 
 export interface ProfileOverrides {
   title?: string;
@@ -87,7 +88,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [googleClientId, setGoogleClientIdState] = useState<string>(
-    import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
+    import.meta.env.VITE_GOOGLE_CLIENT_ID || DEFAULT_GOOGLE_CLIENT_ID
   );
 
   // Initialize from storage on mount
@@ -116,6 +117,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const savedClientId = localStorage.getItem(STORAGE_KEYS.GOOGLE_CLIENT_ID);
       if (savedClientId) {
         setGoogleClientIdState(savedClientId);
+      } else {
+        setGoogleClientIdState(DEFAULT_GOOGLE_CLIENT_ID);
       }
     } catch (err) {
       console.error('Failed to load admin settings from storage:', err);

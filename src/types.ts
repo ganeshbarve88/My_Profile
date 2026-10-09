@@ -68,3 +68,18 @@ export interface ArchitectureStep {
   outcomes: string[];
   systemType: 'source' | 'orchestration' | 'storage' | 'warehouse' | 'consumption';
 }
+
+export interface SocialLink {
+  id: string;
+  name: string;
+  category: 'Code & Tools' | 'YouTube & Podcasts' | 'Writing & Literature' | 'Professional & Social';
+  handle: string;
+  url: string;
+  tagline: string;
+  description: string;
+  icon: 'github' | 'linkedin' | 'youtube' | 'convertify' | 'blog' | 'x' | 'threads' | 'instagram' | 'facebook';
+  badge: string;
+  nativeTitle?: string;
+  isApp?: boolean;
+}
+

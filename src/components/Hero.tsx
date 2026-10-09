@@ -147,13 +147,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onOpenContact }) => {
           </div>
 
           {/* Right Photo Presentation */}
-          <div className="w-48 sm:w-56 md:w-64 shrink-0">
-            <div className="relative aspect-square overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 shadow-xl group">
+          <div className="w-48 sm:w-56 md:w-64 shrink-0 flex flex-col items-center">
+            <div className="relative aspect-square w-full overflow-hidden rounded-full border-4 border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 group">
               {!imgError ? (
                 <img
                   src={photoUrl}
                   alt={profileData.name}
-                  className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-102"
+                  className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                   onError={() => {
                     setImgError(true);
@@ -181,13 +181,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onOpenContact }) => {
               <button
                 onClick={handleEditPhotoClick}
                 title={isAdmin ? "Edit / Update Photo" : "Admin Login to Change Photo"}
-                className="absolute bottom-2 right-2 flex items-center gap-1 rounded-lg bg-slate-950/75 hover:bg-slate-950 text-white px-2.5 py-1 text-[11px] font-medium backdrop-blur-md transition-all shadow-md cursor-pointer border border-white/20"
+                className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full bg-slate-950/80 hover:bg-slate-950 text-white px-3 py-1 text-[11px] font-medium backdrop-blur-md transition-all shadow-lg cursor-pointer border border-white/20 hover:scale-105"
               >
                 <Camera className="h-3 w-3 text-sky-400" />
                 <span>{isAdmin ? "Change Photo" : "Edit Photo"}</span>
               </button>
             </div>
-            <p className="mt-2 text-center text-[11px] text-slate-500">
+            <p className="mt-2.5 text-center text-[11px] font-medium text-slate-500 dark:text-slate-400">
               Senior Lead @ ANZ Bank
             </p>
           </div>

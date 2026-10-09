@@ -11,8 +11,7 @@ import {
   Shield, 
   LogOut,
   Sparkles,
-  Link as LinkIcon,
-  Key
+  Link as LinkIcon
 } from 'lucide-react';
 
 export const EditProfileModal: React.FC = () => {
@@ -27,8 +26,7 @@ export const EditProfileModal: React.FC = () => {
     resetPhoto,
     profileData,
     updateProfile,
-    resetProfile,
-    changePasskey
+    resetProfile
   } = useAdmin();
 
   const [activeTab, setActiveTab] = useState<'photo' | 'details' | 'security'>('photo');
@@ -44,11 +42,6 @@ export const EditProfileModal: React.FC = () => {
   const [secondaryPhone, setSecondaryPhone] = useState(profileData.secondaryPhone);
   const [summary, setSummary] = useState(profileData.summary);
   const [detailsSavedNotice, setDetailsSavedNotice] = useState(false);
-
-  // Security fields
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [securityMessage, setSecurityMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
   if (!isEditModalOpen) return null;
 
@@ -138,18 +131,6 @@ export const EditProfileModal: React.FC = () => {
     setTimeout(() => setDetailsSavedNotice(false), 3000);
   };
 
-  const handleChangePassword = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSecurityMessage(null);
-
-    const res = changePasskey(currentPassword, newPassword);
-    setSecurityMessage({ text: res.message, isError: !res.success });
-    if (res.success) {
-      setCurrentPassword('');
-      setNewPassword('');
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
@@ -219,7 +200,7 @@ export const EditProfileModal: React.FC = () => {
             }`}
           >
             <Shield className="h-4 w-4" />
-            <span>Security & Access</span>
+            <span>Google Account</span>
           </button>
         </div>
 
@@ -229,13 +210,13 @@ export const EditProfileModal: React.FC = () => {
             <div className="space-y-6">
               {/* Photo preview block */}
               <div className="flex flex-col sm:flex-row items-center gap-6 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50">
-                <div className="relative aspect-square w-36 sm:w-44 rounded-2xl overflow-hidden border-2 border-sky-500 shadow-md shrink-0 bg-slate-200 dark:bg-slate-800">
+                <div className="relative aspect-square w-36 sm:w-44 rounded-full overflow-hidden border-4 border-sky-500 shadow-lg ring-2 ring-sky-500/20 shrink-0 bg-slate-200 dark:bg-slate-800">
                   <img
                     src={tempPhotoUrl || photoUrl}
                     alt="Ganesh Barve Preview"
                     className="h-full w-full object-cover object-top"
                   />
-                  <div className="absolute bottom-1 right-1 rounded-md bg-slate-950/80 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-xs">
+                  <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/80 px-2.5 py-0.5 text-[10px] text-white backdrop-blur-xs">
                     Current
                   </div>
                 </div>
@@ -463,14 +444,21 @@ export const EditProfileModal: React.FC = () => {
           )}
 
           {activeTab === 'security' && (
-            /* Security Tab */
+            /* Google Account Tab */
             <div className="space-y-6">
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-slate-50 dark:bg-slate-950/60">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
-                  Active Session
-                </h4>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 font-bold">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-slate-50 dark:bg-slate-950/60 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Connected Google Account
+                  </h4>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    <Check className="h-3 w-3" />
+                    <span>Verified</span>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3.5 pt-1">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 font-bold overflow-hidden shadow-xs border border-sky-300 dark:border-sky-800">
                     {googleProfile?.picture ? (
                       <img src={googleProfile.picture} alt="Google Avatar" className="h-full w-full rounded-full object-cover" />
                     ) : (
@@ -478,75 +466,30 @@ export const EditProfileModal: React.FC = () => {
                     )}
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-900 dark:text-white">
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">
+                      {googleProfile?.name || 'Administrator'}
+                    </p>
+                    <p className="font-mono text-xs text-sky-600 dark:text-sky-400">
                       {currentUser}
                     </p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                      {googleProfile ? 'Authenticated via Google Identity Services' : 'Authenticated via Admin Password'}
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      Authenticated via Google Identity Services
                     </p>
                   </div>
                 </div>
-              </div>
 
-              {/* Password update form */}
-              <form onSubmit={handleChangePassword} className="space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Update Admin Password
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  You can set a custom private password for fallback email + password authentication.
-                </p>
-
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      Current Password
-                    </label>
-                    <input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Enter current password"
-                      className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-xs text-slate-900 focus:border-sky-500 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      New Password (min 6 characters)
-                    </label>
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Enter new strong password"
-                      className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-xs text-slate-900 focus:border-sky-500 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                      required
-                    />
-                  </div>
-                </div>
-
-                {securityMessage && (
-                  <div className={`flex items-center gap-2 rounded-lg p-3 text-xs ${
-                    securityMessage.isError 
-                      ? 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/40 dark:border-red-900/50 dark:text-red-400' 
-                      : 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-300'
-                  }`}>
-                    <span>{securityMessage.text}</span>
-                  </div>
-                )}
-
-                <div className="flex justify-end pt-1">
+                <div className="pt-3 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between">
+                  <span className="text-xs text-slate-500">End this session:</span>
                   <button
-                    type="submit"
-                    className="flex items-center gap-1.5 rounded-lg bg-sky-600 px-4 py-2 text-xs font-semibold text-white hover:bg-sky-500 transition-colors cursor-pointer"
+                    type="button"
+                    onClick={logout}
+                    className="flex items-center gap-1.5 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-3.5 py-1.5 text-xs font-semibold text-red-700 dark:text-red-400 hover:bg-red-100 transition-colors cursor-pointer"
                   >
-                    <Key className="h-3.5 w-3.5" />
-                    <span>Update Password</span>
+                    <LogOut className="h-3.5 w-3.5" />
+                    <span>Sign Out of Admin</span>
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
           )}
         </div>
